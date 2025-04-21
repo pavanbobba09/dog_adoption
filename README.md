@@ -7,7 +7,7 @@ Hey! This is my submission for the Fetch Frontend Take-Home Exercise. I built a 
 ## 🔗 Live Demo
 
 **Hosted on Vercel:**  
-👉 dog-adoption-gamma.vercel.app
+👉 https://dog-adoption-gamma.vercel.app/
 
 **GitHub Repo:**  
 👉 https://github.com/pavanbobba09/dog_adoption
