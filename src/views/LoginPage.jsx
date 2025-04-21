@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { handleLogin, checkExistingSession } from "../presenters/authPresenter";
+import { useNavigate } from "react-router-dom";
+
 
 function LoginPage() {
   const [name, setName] = useState("");
@@ -10,12 +12,14 @@ function LoginPage() {
   const [emailError, setEmailError] = useState("");
   const [sessionChecked, setSessionChecked] = useState(false);
 
+   const navigate = useNavigate()
+
   useEffect(() => {
     const checkSession = async () => {
       try {
         const isLoggedIn = await checkExistingSession();
         if (isLoggedIn) {
-          window.location.href = "/search"; // user already logged
+          navigate("/search"); // user already logged
         }
       } catch (err) {
         console.error("Session check failed:", err);
@@ -25,7 +29,7 @@ function LoginPage() {
     };
 
     checkSession();
-  }, []);
+  }, [navigate]);
 
   const validateForm = () => {
     let isValid = true;
@@ -61,9 +65,10 @@ function LoginPage() {
       const sanitizedEmail = email.trim().toLowerCase();
 
       const result = await handleLogin(sanitizedName, sanitizedEmail);
-      if (!result.success) {
-        setError(result.message); // show backend error
-      }
+      if (result.success) {
+        navigate("/search"); 
+      } else {
+        setError(result.message);
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
