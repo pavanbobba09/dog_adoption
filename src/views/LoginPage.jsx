@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { handleLogin, checkExistingSession } from "../presenters/authPresenter";
 import { useNavigate } from "react-router-dom";
 
-
 function LoginPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,7 +11,7 @@ function LoginPage() {
   const [emailError, setEmailError] = useState("");
   const [sessionChecked, setSessionChecked] = useState(false);
 
-   const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -66,9 +65,10 @@ function LoginPage() {
 
       const result = await handleLogin(sanitizedName, sanitizedEmail);
       if (result.success) {
-        navigate("/search"); 
+        navigate("/search");
       } else {
-        setError(result.message);
+        setError(result.message); // ✅ fixed: properly enclosed else
+      }
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
@@ -91,6 +91,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 p-4 relative overflow-hidden">
+      {/* Animated background and visual paw elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-white rounded-full opacity-10 animate-pulse"></div>
         <div className="absolute top-20 right-20 w-64 h-64 bg-white rounded-full opacity-10 animate-pulse" style={{ animationDelay: "1s" }}></div>
@@ -103,29 +104,24 @@ function LoginPage() {
 
       <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 w-full max-w-md transition-all duration-500 hover:shadow-pink-500/30 z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="text-7xl mb-4 transform transition-transform duration-300 hover:scale-110 hover:rotate-6" role="img" aria-label="Dog emoji">🐶</div>
-          <h1 className="text-3xl font-extrabold text-center mb-1 bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">Paws & Hearts</h1>
+          <div className="text-7xl mb-4 transform transition-transform duration-300 hover:scale-110 hover:rotate-6">🐶</div>
+          <h1 className="text-3xl font-extrabold text-center mb-1 bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">
+            Paws & Hearts
+          </h1>
           <p className="text-center text-gray-600 mb-2">Find your perfect furry companion</p>
-          <div className="flex items-center w-full mt-2">
-            <div className="flex-grow h-0.5 bg-gradient-to-r from-transparent via-pink-200 to-transparent"></div>
-            <div className="mx-2 text-pink-400" role="img" aria-label="Paw print emoji">🐾</div>
-            <div className="flex-grow h-0.5 bg-gradient-to-r from-transparent via-pink-200 to-transparent"></div>
-          </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm animate-fadeIn" role="alert">
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm animate-fadeIn">
             {error}
           </div>
         )}
 
         <form onSubmit={onSubmit} className="space-y-5" noValidate>
           <div className="group">
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1" htmlFor="name">
-              Your Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1" htmlFor="name">Your Name</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
@@ -148,11 +144,9 @@ function LoginPage() {
           </div>
 
           <div className="group">
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1" htmlFor="email">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1" htmlFor="email">Email Address</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
@@ -177,9 +171,7 @@ function LoginPage() {
 
           <div className="flex items-center">
             <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-              Remember me
-            </label>
+            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">Remember me</label>
           </div>
 
           <button
