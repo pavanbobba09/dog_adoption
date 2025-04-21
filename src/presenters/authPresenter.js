@@ -19,7 +19,10 @@ export async function handleLogin(name, email) {
       sessionStorage.setItem("currentUserEmail", email);
       sessionStorage.setItem("currentUserName", name);
       sessionStorage.setItem("isRememberedUser", rememberMe ? "true" : "false");
-      window.location.href = "/search"; // go to main page
+      //window.location.href = "/search"; // go to main page
+      setTimeout(() => {
+        window.location.href = "/search";
+      }, 200);
       return { success: true };
     } else {
       switch (response.status) {
