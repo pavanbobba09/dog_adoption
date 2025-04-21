@@ -4,27 +4,34 @@ export async function handleLogin(name, email) {
   try {
     const rememberCheckbox = document.getElementById("remember-me");
     const rememberMe = rememberCheckbox && rememberCheckbox.checked;
-    // if (rememberCheckbox && rememberCheckbox.checked) {
-    //   localStorage.setItem("rememberedEmail", email); // save mail for later use
-    // }
 
     if (rememberMe) {
       localStorage.setItem("rememberedEmail", email);
       localStorage.setItem("rememberedUser", name);
     }
 
+    
+    sessionStorage.setItem("currentUserEmail", email);
+    sessionStorage.setItem("currentUserName", name);
+    sessionStorage.setItem("isRememberedUser", rememberMe ? "true" : "false");
+    
+  
     const response = await loginUser(name, email);
     
     if (response.ok) {
-      sessionStorage.setItem("currentUserEmail", email);
-      sessionStorage.setItem("currentUserName", name);
-      sessionStorage.setItem("isRememberedUser", rememberMe ? "true" : "false");
-      //window.location.href = "/search"; // go to main page
-      // setTimeout(() => {
-      //   window.location.href = "/search";
-      // }, 200);
+      
+      sessionStorage.setItem("authenticationSuccessful", "true");
+      
+      
+      window.location.replace("/search");
+      
       return { success: true };
     } else {
+      // Clear the session storage if login failed
+      sessionStorage.removeItem("currentUserEmail");
+      sessionStorage.removeItem("currentUserName");
+      sessionStorage.removeItem("isRememberedUser");
+      
       switch (response.status) {
         case 400:
           return { 
@@ -64,44 +71,65 @@ export async function handleLogin(name, email) {
 
 export async function checkExistingSession() {
   try {
-    const isSessionValid = await checkSession(); // just checking if session active
+    console.log("Checking session...");
+    
+    // Check if we have the flag for successful authentication
+    const authSuccess = sessionStorage.getItem("authenticationSuccessful") === "true";
+    
+    // If we have local auth success flag, try to validate with server
+    if (authSuccess) {
+      const isSessionValid = await checkSession();
+      console.log("Server session valid:", isSessionValid);
+      
+      // If server says no valid session, clear our flag
+      if (!isSessionValid) {
+        sessionStorage.removeItem("authenticationSuccessful");
+      }
+      
+      return isSessionValid;
+    }
+    
+    // Also check with server regardless
+    const isSessionValid = await checkSession();
+    console.log("Direct server session check:", isSessionValid);
+    
+    // If server says we have a valid session, set our flag
+    if (isSessionValid) {
+      sessionStorage.setItem("authenticationSuccessful", "true");
+    }
+    
     return isSessionValid;
   } catch (error) {
     console.error("Session check error:", error);
+    sessionStorage.removeItem("authenticationSuccessful");
     return false;
   }
 }
 
-// export async function handleLogout() {
-//   try {
-//     await logoutUser();
-//     window.location.href = "/"; // back to login
-//   } catch (error) {
-//     console.error("Logout error:", error);
-//     alert("Logout not working. Try again");
-//   }
-// }
-
 export async function handleLogout() {
   try {
-    // Check if this was a remembered user
+    // Clear our auth flag
+    sessionStorage.removeItem("authenticationSuccessful");
+    
+    // The rest of your existing logout code
     const isRememberedUser = sessionStorage.getItem("isRememberedUser") === "true";
     const currentUserEmail = sessionStorage.getItem("currentUserEmail");
     
-    // Only clear favorites if this was not a remembered user
     if (!isRememberedUser && currentUserEmail) {
       const favoritesKey = `dogFavorites_${currentUserEmail}`;
       localStorage.removeItem(favoritesKey);
     }
     
-    // Clear session storage
     sessionStorage.removeItem("currentUserEmail");
     sessionStorage.removeItem("currentUserName");
     sessionStorage.removeItem("isRememberedUser");
     sessionStorage.removeItem("matchFavorites");
     
+    // Call the API to invalidate the session cookie
     await logoutUser();
-    window.location.href = "/";
+    
+    // Use location.replace for better cross-browser compatibility
+    window.location.replace("/");
   } catch (error) {
     console.error("Logout error:", error);
     alert("Logout not working. Try again");

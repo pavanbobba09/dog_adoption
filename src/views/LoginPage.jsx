@@ -51,30 +51,33 @@ function LoginPage() {
     return isValid;
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
 
-    if (!validateForm()) return;
 
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const sanitizedName = name.trim();
-      const sanitizedEmail = email.trim().toLowerCase();
-
-      const result = await handleLogin(sanitizedName, sanitizedEmail);
-      if (result.success) {
-        navigate("/search");
-      } else {
-        setError(result.message); // ✅ fixed: properly enclosed else
-      }
-    } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+const onSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  
+  setIsLoading(true);
+  setError("");
+  
+  try {
+    const sanitizedName = name.trim();
+    const sanitizedEmail = email.trim().toLowerCase();
+    
+    const result = await handleLogin(sanitizedName, sanitizedEmail);
+    
+    if (result.success) {
+      /
+      window.location.replace("/search");
+    } else {
+      setError(result.message);
     }
-  };
+  } catch (err) {
+    setError(err.message || "Login failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   if (!sessionChecked) {
     return (
