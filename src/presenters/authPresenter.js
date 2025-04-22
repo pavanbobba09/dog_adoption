@@ -111,7 +111,7 @@ export async function handleLogout() {
     // Clear our auth flag
     sessionStorage.removeItem("authenticationSuccessful");
     
-    // The rest of your existing logout code
+
     const isRememberedUser = sessionStorage.getItem("isRememberedUser") === "true";
     const currentUserEmail = sessionStorage.getItem("currentUserEmail");
     
@@ -128,7 +128,7 @@ export async function handleLogout() {
     // Call the API to invalidate the session cookie
     await logoutUser();
     
-    // Use location.replace for better cross-browser compatibility
+  
     window.location.replace("/");
   } catch (error) {
     console.error("Logout error:", error);
