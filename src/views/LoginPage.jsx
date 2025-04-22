@@ -67,7 +67,7 @@ const onSubmit = async (e) => {
     const result = await handleLogin(sanitizedName, sanitizedEmail);
     
     if (result.success) {
-      /
+      
       window.location.replace("/search");
     } else {
       setError(result.message);
